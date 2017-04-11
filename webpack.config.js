@@ -1,4 +1,6 @@
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+var CleanWebpackPlugin = require('clean-webpack-plugin');
 var path = require('path')
 var webpack = require('webpack')
 
@@ -9,11 +11,15 @@ module.exports = {
     ],
     output: {
         path: path.resolve(__dirname, 'dist'),
-        publicPath: 'dist/',
+        //publicPath: 'dist/',
         filename: 'app.js'
     },
     module: {
         rules: [
+            {
+                test: /\.html$/,
+                use: ['html-loader']
+            },
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
@@ -30,8 +36,10 @@ module.exports = {
             },
             {
                 test: /\.js$/,
-                loader: 'babel-loader',
-                exclude: /node_modules/
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader'
+                }
             },
             {
                 test: /\.css$/,
@@ -50,25 +58,31 @@ module.exports = {
                 include: [
                     path.resolve(__dirname, 'src/assets/img')
                 ],
-                loader: 'file-loader',
-                options: {
-                    name: 'img/[name].[ext]?[hash]'
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        name: 'img/[name].[ext]?[hash]'
+                    }
                 }
             },
             {
                 test: /glyphicons-halflings-regular\.(svg|eot|woff|woff2|ttf)$/,
-                loader: 'file-loader',
-                options: {
-                    publicPath: './', //comment this if 'extractStyles: false' in .bootstraprc
-                    name: 'fonts/glyphicons/[name].[ext]?[hash]'
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        //publicPath: './', //comment this if 'extractStyles: false' in .bootstraprc
+                        name: 'fonts/glyphicons/[name].[ext]?[hash]'
+                    }
                 }
             },
             {
                 test: /fontawesome-webfont\.(svg|eot|woff|woff2|ttf)$/,
-                loader: 'file-loader',
-                options: {
-                    publicPath: './',
-                    name: 'fonts/fontawesome/[name].[ext]?[hash]'
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        //publicPath: './',
+                        name: 'fonts/fontawesome/[name].[ext]?[hash]'
+                    }
                 }
             }
         ]
@@ -91,7 +105,11 @@ module.exports = {
             filename: 'app.css',
             disable: false,
             allChunks: true
-        })
+        }),
+        new HtmlWebpackPlugin({
+            template: 'src/index.html'
+        }),
+        new CleanWebpackPlugin(['dist'])
     ]
 }
 
