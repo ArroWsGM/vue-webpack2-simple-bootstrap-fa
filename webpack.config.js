@@ -1,4 +1,5 @@
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CleanWebpackPlugin = require('clean-webpack-plugin');
 var path = require('path')
 var webpack = require('webpack')
@@ -10,11 +11,15 @@ module.exports = {
     ],
     output: {
         path: path.resolve(__dirname, 'dist'),
-        publicPath: 'dist/',
-        filename: 'app.js'
+        //publicPath: 'dist/',
+        filename: 'js/app.js'
     },
     module: {
         rules: [
+            {
+                test: /\.html$/,
+                use: ['html-loader']
+            },
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
@@ -65,7 +70,8 @@ module.exports = {
                 use: {
                     loader: 'file-loader',
                     options: {
-                        publicPath: './', //comment this if 'extractStyles: false' in .bootstraprc
+                        publicPath: '../', //comment this if 'extractStyles: false' in .bootstraprc
+                        outputPath: '../',
                         name: 'fonts/glyphicons/[name].[ext]?[hash]'
                     }
                 }
@@ -75,7 +81,8 @@ module.exports = {
                 use: {
                     loader: 'file-loader',
                     options: {
-                        publicPath: './',
+                        publicPath: '../',
+                        outputPath: '../',
                         name: 'fonts/fontawesome/[name].[ext]?[hash]'
                     }
                 }
@@ -97,9 +104,12 @@ module.exports = {
     devtool: '#eval-source-map',
     plugins: [
         new ExtractTextPlugin({
-            filename: 'app.css',
+            filename: 'css/app.css',
             disable: false,
             allChunks: true
+        }),
+        new HtmlWebpackPlugin({
+            template: 'src/index.html'
         }),
         new CleanWebpackPlugin(['dist'])
     ]
